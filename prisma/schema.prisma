@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TransactionType {
+  income
+  expense
+}
+
+model User {
+  id             String          @id @default(uuid()) @db.Uuid
+  name           String
+  email          String          @unique
+  onboarded      Boolean         @default(false)
+  createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
+  transactions   Transaction[]
+  budgets        Budget[]
+  goals          Goal[]
+  loans          Loan[]
+  preferences    Preference?
+  authenticators Authenticator[]
+
+  @@map("users")
+}
+
+model Transaction {
+  id       String          @id @default(uuid()) @db.Uuid
+  userId   String          @map("user_id") @db.Uuid
+  date     DateTime        @db.Date
+  desc     String
+  amount   Decimal         @db.Decimal(14, 2)
+  type     TransactionType
+  category String?
+  loanId   String?         @map("loan_id") @db.Uuid
+
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  loan Loan? @relation(fields: [loanId], references: [id], onDelete: SetNull)
+
+  @@index([userId, date(sort: Desc)], map: "tx_user_date_idx")
+  @@map("transactions")
+}
+
+model Budget {
+  id           String  @id @default(uuid()) @db.Uuid
+  userId       String  @map("user_id") @db.Uuid
+  categoryKey  String  @map("category_key")
+  monthlyLimit Decimal @map("monthly_limit") @db.Decimal(14, 2)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, categoryKey])
+  @@map("budgets")
+}
+
+model Goal {
+  id     String  @id @default(uuid()) @db.Uuid
+  userId String  @map("user_id") @db.Uuid
+  name   String
+  target Decimal @db.Decimal(14, 2)
+  saved  Decimal @db.Decimal(14, 2)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("goals")
+}
+
+model Loan {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  name       String
+  principal  Decimal  @db.Decimal(14, 2)
+  rate       Decimal  @db.Decimal(6, 4)
+  termMonths Int      @map("term_months")
+  startDate  DateTime @map("start_date") @db.Date
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@map("loans")
+}
+
+model Preference {
+  id           String  @id @default(uuid()) @db.Uuid
+  userId       String  @unique @map("user_id") @db.Uuid
+  currencyCode String  @map("currency_code")
+  customSymbol String? @map("custom_symbol")
+  decimals     Int     @default(2)
+  position     String
+  themeAccent  String  @map("theme_accent")
+  themeBase    String  @map("theme_base")
+  themeMode    String  @map("theme_mode")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("preferences")
+}
+
+model Authenticator {
+  id          String    @id @default(uuid()) @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+  secret      String
+  digits      Int       @default(6)
+  period      Int       @default(30)
+  confirmedAt DateTime? @map("confirmed_at") @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("authenticators")
+}
