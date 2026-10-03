@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 :root {
+  color-scheme: dark;
   --background: #111512;
   --foreground: #f4f6f1;
   --muted: #a4afa5;
@@ -10,6 +11,88 @@
   --accent: #9fd3a8;
   --accent-soft: #243b2a;
   --accent-ink: #132016;
+  --positive: #9fd3a8;
+  --negative: #f19a91;
+  --chart-income: #9fd3a8;
+  --chart-expense: #e9857b;
+  --category-0: #e0a16e;
+  --category-1: #91a9e0;
+  --category-2: #c393e2;
+  --category-3: #65c5c1;
+  --category-4: #e681aa;
+  --category-5: #a6bf73;
+  --category-6: #e0c36c;
+  --category-7: #dc7774;
+  --category-8: #8e9a91;
+  --sidebar: #141829;
+  --sidebar-hover: #232a3d;
+  --sidebar-line: #2b3146;
+  --sidebar-foreground: #f4f5f8;
+  --sidebar-muted: #b5b8c2;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+.light {
+  color-scheme: light;
+  --background: #ffffff;
+  --foreground: #141829;
+  --muted: #626a7b;
+  --panel: #ffffff;
+  --surface: #e8eee8;
+  --line: #d3ddd4;
+  --accent: #357a47;
+  --accent-soft: #e4f0e5;
+  --accent-ink: #ffffff;
+  --positive: #28733c;
+  --negative: #a43c35;
+  --chart-income: #418b52;
+  --chart-expense: #c4554b;
+  --category-0: #a75b20;
+  --category-1: #4265ae;
+  --category-2: #8050a2;
+  --category-3: #167a77;
+  --category-4: #a23d6c;
+  --category-5: #607d24;
+  --category-6: #8c6b00;
+  --category-7: #a7433e;
+  --category-8: #59655d;
+}
+
+:root[data-base="neutral"] {
+  --background: #151515;
+  --panel: #1d1d1d;
+  --surface: #282828;
+  --line: #3b3b3b;
+  --muted: #adadad;
+}
+
+.light[data-base="neutral"] {
+  --background: #f4f4f2;
+  --panel: #ffffff;
+  --surface: #ebebe8;
+  --line: #d6d6d1;
+  --muted: #60605a;
+}
+
+:root[data-base="contrast"] {
+  --background: #080a08;
+  --foreground: #ffffff;
+  --panel: #111411;
+  --surface: #1d241e;
+  --line: #536257;
+  --muted: #c1ccc2;
+}
+
+.light[data-base="contrast"] {
+  --background: #ffffff;
+  --foreground: #101410;
+  --panel: #ffffff;
+  --surface: #f0f3ef;
+  --line: #69786c;
+  --muted: #3f4d41;
 }
 
 @theme inline {
@@ -22,6 +105,13 @@
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
   --color-accent-ink: var(--accent-ink);
+  --color-positive: var(--positive);
+  --color-negative: var(--negative);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-hover: var(--sidebar-hover);
+  --color-sidebar-line: var(--sidebar-line);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-muted: var(--sidebar-muted);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -35,4 +125,66 @@ body {
 ::selection {
   background: var(--accent);
   color: var(--accent-ink);
+}
+
+@keyframes coffer-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes coffer-slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes coffer-slide-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes coffer-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+[data-slot="sheet-overlay"][data-state="open"] {
+  animation: coffer-fade-in 160ms ease;
+}
+
+[data-slot="sheet-content"][data-side="right"][data-state="open"] {
+  animation: coffer-slide-in-right 220ms ease;
+}
+
+[data-slot="sheet-content"][data-side="left"][data-state="open"] {
+  animation: coffer-slide-in-left 220ms ease;
+}
+
+[data-slot="dropdown-menu-content"][data-state="open"] {
+  animation: coffer-pop-in 120ms ease;
+}
+
+@layer base {
+  @media (hover: hover) and (pointer: fine) {
+    a:hover {
+      color: var(--foreground);
+    }
+  }
 }

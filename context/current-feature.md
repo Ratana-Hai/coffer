@@ -1,22 +1,29 @@
-# Current Feature: Overview
+# Current Feature: App Shell
 
 ## Status
-Not Started
+
+In Progress
 
 ## Goals
-- Render five overview stat tiles in the specified order, with correct tones, compact values, and exact amounts in `title`.
-- Show this month's expense categories and exactly six months of income-versus-expense trend data.
-- Show the latest five transactions using the shared transaction row, with deletion available.
-- Derive all figures from the same domain functions used by their feature pages; SQL-aggregate transaction totals and fold loan payments through the finance logic.
-- Handle empty data, missing goals, zero goal targets, and loading/error states without layout shifts or invalid percentages.
-- Remain usable at 320px, respond to theme changes without reload, and format KHR values correctly.
+
+- Build the persistent shell in `src/app/(app)/layout.tsx`: a left sidebar, a workspace navbar, and a scrollable page region that supports both a single wide column and a main + secondary panel layout.
+- Render the sidebar with a 240px expanded / 72px collapsed width, brand + wordmark, flat nav in order (Overview, Transactions, Budgets, Loans, Goals), a separated **Add transaction** action, Settings near the bottom, and the account identity with menu.
+- Render the navbar with breadcrumbs on the left (`aria-current="page"` on the current item) and route actions on the right; no global Share action.
+- Make the sidebar responsive: persistent collapsible rail above 880px, off-canvas drawer with scrim at or below 880px, with exact breakpoint at 880/881px and no bottom tab bar.
+- Provide one responsive overlay mechanism (sheet > 880px, bottom drawer ≤ 880px) with a header / scrolling body / pinned footer, used by Add transaction and the account menu.
+- Drive all surface, border, and text colors from theme tokens; keep responsive CSS rules last so breakpoints win on equal specificity.
+- Hold to 320px with no horizontal body scroll; keep interactive targets at 44x44 below 880px.
+- Wire the stat grid (hidden on `/settings`) and the footer note that changes on `/settings`.
 
 ## Notes
-- Spec: `context/feature/02-overview.md`.
-- Overview is read-only and owns no tables or mutation actions; deleting a recent transaction uses the shared transaction behavior.
-- The user's local month determines the current-month figures and long-form month label.
-- The app layout owns the five stat tiles; the Overview page composes the charts and recent activity.
-- `getOverview()` is cache-wrapped so the tiles, charts, and recent list share one execution. Chart category colors use stored slots and CSS variables.
-- Debt must match the Loans page to the cent. Do not add date-range or month navigation.
+
+- Spec: `context/feature/08-app-shell.md`. Reference image at `context/screenshoot/sample.png`.
+- Shell files: `src/app/(app)/layout.tsx`, `src/components/layout/{Sidebar,Navbar,AccountMenu,ViewHeader,StatGrid}.tsx`, `src/components/shared/ResponsivePanel.tsx`, `src/hooks/use-media-query.ts`.
+- Active nav uses `<Link>` + `usePathname()`; match route-segment boundaries (`/loans/[loanId]` activates Loans, `/goals` must not activate for `/overview`).
+- View header strings follow the table (e.g. Loans: `1 loan · $X outstanding` / `N loans · $X outstanding` / `No loans tracked`), computed from page data and preferences.
+- Footer note: `/settings` → "Settings apply when you save — everything else saves automatically."; elsewhere → "Saved automatically — only visible to you."
+- Overlays lock body scroll and compensate for scrollbar width; Escape/scrim/close dismiss and return focus to the trigger; resizing across 880px switches shape without losing form state.
+- Hover styling gated behind `@media (hover: hover) and (pointer: fine)`.
+- Assert computed values (contrast ratios, resolved tokens, bounding boxes) rather than screenshots alone.
 
 ## History
