@@ -14,6 +14,7 @@ One spec per feature, for the architecture described in
 | 06 | [Goals](06-goals.md) | `features/goals` | integration (concurrency) + E2E |
 | 07 | [Settings](07-settings.md) | `features/settings` | E2E + unit (contrast) |
 | 08 | [App shell](08-app-shell.md) | `components/layout` | E2E (geometry) |
+| 09 | [Database (Neon + Prisma)](09-database.md) | `server/db`, `prisma/` | integration (Testcontainers) |
 
 Read **00-conventions** first. It defines the money, date, category and action
 rules the other eight assume rather than repeat.

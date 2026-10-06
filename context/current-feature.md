@@ -1,4 +1,4 @@
-# Current Feature: App Shell
+# Current Feature: Database (Neon Postgres + Prisma)
 
 ## Status
 
@@ -6,24 +6,19 @@ In Progress
 
 ## Goals
 
-- Build the persistent shell in `src/app/(app)/layout.tsx`: a left sidebar, a workspace navbar, and a scrollable page region that supports both a single wide column and a main + secondary panel layout.
-- Render the sidebar with a 240px expanded / 72px collapsed width, brand + wordmark, flat nav in order (Overview, Transactions, Budgets, Loans, Goals), a separated **Add transaction** action, Settings near the bottom, and the account identity with menu.
-- Render the navbar with breadcrumbs on the left (`aria-current="page"` on the current item) and route actions on the right; no global Share action.
-- Make the sidebar responsive: persistent collapsible rail above 880px, off-canvas drawer with scrim at or below 880px, with exact breakpoint at 880/881px and no bottom tab bar.
-- Provide one responsive overlay mechanism (sheet > 880px, bottom drawer ≤ 880px) with a header / scrolling body / pinned footer, used by Add transaction and the account menu.
-- Drive all surface, border, and text colors from theme tokens; keep responsive CSS rules last so breakpoints win on equal specificity.
-- Hold to 320px with no horizontal body scroll; keep interactive targets at 44x44 below 880px.
-- Wire the stat grid (hidden on `/settings`) and the footer note that changes on `/settings`.
+- Add the Neon + Prisma driver-adapter dependencies (`@prisma/adapter-neon`, `@neondatabase/serverless`) and make `src/server/db/index.ts` env-aware: Neon adapter over the pooled URL at runtime, plain classic client over `TEST_DATABASE_URL` in tests.
+- Add `directUrl = env("DIRECT_URL")` to the Prisma datasource and generate the first migration, checked in under `prisma/migrations/`.
+- Extend `src/lib/env.ts` with `DIRECT_URL` (required) and `SHADOW_DATABASE_URL` (optional) and update `.env.example`.
+- Implement `prisma/seed.ts` with dev + E2E fixtures, including a KHR ledger (0 decimals, suffix symbol).
+- Add `vitest.config.ts` with a Testcontainers `globalSetup` that runs `prisma migrate deploy` and exposes `TEST_DATABASE_URL`.
+- Verify every repository filters on `userId`; money stays `numeric(14,2)`, calendar days normalize to `YYYY-MM-DD` at the repository boundary.
 
 ## Notes
 
-- Spec: `context/feature/08-app-shell.md`. Reference image at `context/screenshoot/sample.png`.
-- Shell files: `src/app/(app)/layout.tsx`, `src/components/layout/{Sidebar,Navbar,AccountMenu,ViewHeader,StatGrid}.tsx`, `src/components/shared/ResponsivePanel.tsx`, `src/hooks/use-media-query.ts`.
-- Active nav uses `<Link>` + `usePathname()`; match route-segment boundaries (`/loans/[loanId]` activates Loans, `/goals` must not activate for `/overview`).
-- View header strings follow the table (e.g. Loans: `1 loan · $X outstanding` / `N loans · $X outstanding` / `No loans tracked`), computed from page data and preferences.
-- Footer note: `/settings` → "Settings apply when you save — everything else saves automatically."; elsewhere → "Saved automatically — only visible to you."
-- Overlays lock body scroll and compensate for scrollbar width; Escape/scrim/close dismiss and return focus to the trigger; resizing across 880px switches shape without losing form state.
-- Hover styling gated behind `@media (hover: hover) and (pointer: fine)`.
-- Assert computed values (contrast ratios, resolved tokens, bounding boxes) rather than screenshots alone.
+- Spec: `context/feature/09-database.md`. Rules R1–R6.
+- Connection split: runtime → Neon adapter over pooled `DATABASE_URL`; CLI (`migrate`) → `DIRECT_URL`; tests → plain client over `TEST_DATABASE_URL`.
+- Neon project: `main` (prod) + `dev` branch; no per-PR preview branches. Never `db push` in prod — `migrate deploy` only.
+- Offline-first: the first migration is generated with `prisma migrate diff` (no live Neon needed) and applied later via `migrate deploy`.
+- Docker is required for integration tests (Testcontainers); not available in this environment — config is written, run is deferred.
 
 ## History
