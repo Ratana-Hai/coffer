@@ -1,29 +1,40 @@
 import "server-only";
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import { auth } from "./config";
 
-// Dev-only: bypass auth when COFFER_DEV_PREVIEW=1 (development only).
-const devPreview = process.env.NODE_ENV === "development" && process.env.COFFER_DEV_PREVIEW === "1";
-
-const devSessionUser = () => ({
-  id: "dev-user",
-  name: "Dev User",
-  email: "dev@coffer.local",
-});
-
-export async function requireUser() {
-  if (devPreview) return devSessionUser();
-
-  const session = await auth();
-  const user = session?.user as
-    ({ id?: string; name?: string | null; email?: string | null } & object) | undefined;
-  if (!user?.id) redirect("/sign-in?next=%2Foverview");
-  return { ...user, id: user.id };
+export interface SessionUser {
+  id: string;
+  name?: string | null;
+  email?: string | null;
 }
 
-export async function getSessionUser() {
-  if (devPreview) return devSessionUser();
+export interface AuthSession {
+  user: SessionUser;
+  twoFactorVerified: boolean;
+}
 
+export const getSession = cache(async (): Promise<AuthSession | null> => {
   const session = await auth();
+  if (!session?.user?.id) return null;
+  return {
+    user: {
+      id: session.user.id,
+      name: session.user.name,
+      email: session.user.email,
+    },
+    twoFactorVerified:
+      (session as unknown as { twoFactorVerified?: boolean }).twoFactorVerified !== false,
+  };
+});
+
+export async function requireUser(): Promise<SessionUser> {
+  const session = await getSession();
+  if (!session) redirect("/sign-in");
+  return session.user;
+}
+
+export async function getSessionUser(): Promise<SessionUser | null> {
+  const session = await getSession();
   return session?.user ?? null;
 }

@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { lockNow } from "@/features/auth/actions";
 
 export interface ShellUser {
   name?: string | null;
@@ -37,11 +38,9 @@ function initials(name?: string | null): string {
 export function AccountMenu({
   user,
   collapsed = false,
-  hasSecondFactor = false,
 }: {
   user: ShellUser | null;
   collapsed?: boolean;
-  hasSecondFactor?: boolean;
 }) {
   const [currency, setCurrency] = useState("USD");
   const displayName = user?.name?.trim() || user?.email?.trim() || "You";
@@ -105,15 +104,11 @@ export function AccountMenu({
           </DropdownMenuCheckboxItem>
         ))}
 
-        {hasSecondFactor && (
-          <>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <Lock aria-hidden="true" />
-              Lock now
-            </DropdownMenuItem>
-          </>
-        )}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onSelect={() => void lockNow()}>
+          <Lock aria-hidden="true" />
+          Lock now
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

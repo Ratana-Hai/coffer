@@ -17,6 +17,8 @@ model User {
   id             String          @id @default(uuid()) @db.Uuid
   name           String
   email          String          @unique
+  emailVerified  DateTime?       @map("email_verified") @db.Timestamptz(3)
+  image          String?
   onboarded      Boolean         @default(false)
   createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
   transactions   Transaction[]
@@ -25,8 +27,61 @@ model User {
   loans          Loan[]
   preferences    Preference?
   authenticators Authenticator[]
+  accounts       Account[]
+  sessions       Session[]
 
   @@map("users")
+}
+
+model Account {
+  id                String  @id @default(uuid()) @db.Uuid
+  userId            String  @map("user_id") @db.Uuid
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refreshToken      String? @map("refresh_token")
+  accessToken       String? @map("access_token")
+  expiresAt         Int?    @map("expires_at")
+  tokenType         String? @map("token_type")
+  scope             String?
+  idToken           String? @map("id_token")
+  sessionState      String? @map("session_state")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(uuid()) @db.Uuid
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id") @db.Uuid
+  expires      DateTime @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime @db.Timestamptz(3)
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model LoginAttempt {
+  id         String   @id @default(uuid()) @db.Uuid
+  identifier String
+  ip         String
+  at         DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([identifier, at], map: "login_attempt_identifier_at_idx")
+  @@index([ip, at], map: "login_attempt_ip_at_idx")
+  @@map("login_attempts")
 }
 
 model Transaction {
@@ -108,6 +163,7 @@ model Authenticator {
   digits      Int       @default(6)
   period      Int       @default(30)
   confirmedAt DateTime? @map("confirmed_at") @db.Timestamptz(3)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 

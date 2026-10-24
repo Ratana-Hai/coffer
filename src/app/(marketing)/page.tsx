@@ -1,15 +1,26 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { getOnboardingState } from "@/features/auth/queries";
 
-export default function Home() {
+export default async function Home() {
+  const state = await getOnboardingState();
+  if (state.authenticated) redirect("/overview");
+
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col justify-between px-6 py-8 sm:px-10 sm:py-12">
       <header className="flex items-center justify-between">
         <Link className="text-xl font-semibold tracking-tight" href="/">
           coffer<span className="text-accent">.</span>
         </Link>
-        <span className="rounded-full border border-line px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-muted">
-          private beta
-        </span>
+        <div className="flex items-center gap-2">
+          <Button asChild variant="ghost">
+            <Link href="/sign-in">Sign in</Link>
+          </Button>
+          <Button asChild>
+            <Link href="/sign-up">Get started</Link>
+          </Button>
+        </div>
       </header>
 
       <section className="grid gap-12 py-20 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">

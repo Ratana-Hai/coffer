@@ -1,4 +1,4 @@
-# Current Feature: Database (Neon Postgres + Prisma)
+# Current Feature: Auth & Onboarding
 
 ## Status
 
@@ -6,19 +6,23 @@ In Progress
 
 ## Goals
 
-- Add the Neon + Prisma driver-adapter dependencies (`@prisma/adapter-neon`, `@neondatabase/serverless`) and make `src/server/db/index.ts` env-aware: Neon adapter over the pooled URL at runtime, plain classic client over `TEST_DATABASE_URL` in tests.
-- Add `directUrl = env("DIRECT_URL")` to the Prisma datasource and generate the first migration, checked in under `prisma/migrations/`.
-- Extend `src/lib/env.ts` with `DIRECT_URL` (required) and `SHADOW_DATABASE_URL` (optional) and update `.env.example`.
-- Implement `prisma/seed.ts` with dev + E2E fixtures, including a KHR ledger (0 decimals, suffix symbol).
-- Add `vitest.config.ts` with a Testcontainers `globalSetup` that runs `prisma migrate deploy` and exposes `TEST_DATABASE_URL`.
-- Verify every repository filters on `userId`; money stays `numeric(14,2)`, calendar days normalize to `YYYY-MM-DD` at the repository boundary.
+- Wire Auth.js v5 with a magic-link (Email) provider, a Prisma adapter, and a JWT session; add `Account`/`Session`/`VerificationToken`/`LoginAttempt` models and a checked-in migration.
+- Two-field sign-up (name + email, `novalidate`, app-owned per-field errors on submit) that creates the user, starts the session, and redirects to `/overview` (R2–R5).
+- Onboarding welcome screen gated by R1 (no data AND no 2FA AND not onboarded); "Skip and use the defaults" marks onboarded and writes nothing else (R6).
+- Sign-in never reveals whether an email is registered (R16); magic link logged to the server console in dev.
+- `middleware.ts` gates the whole `(app)` group and redirects to `/sign-in?next=`; the session resolves before any ledger content paints (R14, R15).
+- TOTP second factor: RFC 6238 with ±1 window (R11), server-side cooldown after 5 failures (R12), enrollment QR as inline SVG via our own encoder (R8), enrollment inactive until a code confirms (R9), disable requires a current code (R10).
+- Encrypt authenticator secrets at rest with an env key; never expose a secret to a client component.
+- "Lock now" ends the session and redirects to sign-in (R13).
 
 ## Notes
 
-- Spec: `context/feature/09-database.md`. Rules R1–R6.
-- Connection split: runtime → Neon adapter over pooled `DATABASE_URL`; CLI (`migrate`) → `DIRECT_URL`; tests → plain client over `TEST_DATABASE_URL`.
-- Neon project: `main` (prod) + `dev` branch; no per-PR preview branches. Never `db push` in prod — `migrate deploy` only.
-- Offline-first: the first migration is generated with `prisma migrate diff` (no live Neon needed) and applied later via `migrate deploy`.
-- Docker is required for integration tests (Testcontainers); not available in this environment — config is written, run is deferred.
+- Spec: `context/feature/01-auth-and-onboarding.md`, rules R1–R16.
+- Credential: magic link (Email provider). No email provider is wired — the dev transport logs the sign-in URL to the server console.
+- Session: JWT strategy (encrypted cookie, per AGENTS.md); the Prisma adapter persists magic-link `VerificationToken`s only.
+- TOTP secret encrypted at rest (AES-GCM) with a key from `env`; QR encoder is hand-rolled (byte mode, EC level M, versions 1–10).
+- TOTP enrollment/disable UI lands in Settings (feature 07); this feature ships the server actions and the `/verify` challenge.
 
 ## History
+
+- Database (Neon Postgres + Prisma) — `feature/database-neon-prisma`.

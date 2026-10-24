@@ -27,24 +27,6 @@ export async function findOverview(userId: string, timeZone: string): Promise<Ov
   const now = new Date();
   const period = overviewPeriod(now, timeZone);
 
-  // Dev-only: return empty data so the shell renders without a database.
-  if (process.env.NODE_ENV === "development" && process.env.COFFER_DEV_PREVIEW === "1") {
-    return {
-      balance: 0,
-      monthIncome: 0,
-      monthExpense: 0,
-      monthLabel: period.label,
-      debt: 0,
-      loanCount: 0,
-      goalCount: 0,
-      goalSaved: 0,
-      goalTarget: 0,
-      byCategory: [],
-      trend: buildTrendBuckets(now, [], timeZone),
-      recent: [],
-      currency: currencyFormat("USD"),
-    };
-  }
   const currentStart = atDatabaseDate(period.currentStart);
   const nextStart = atDatabaseDate(period.nextStart);
   const [

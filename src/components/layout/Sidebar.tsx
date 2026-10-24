@@ -23,7 +23,6 @@ export interface SidebarProps {
   mobileOpen: boolean;
   onMobileOpenChange: (open: boolean) => void;
   onAddTransaction: () => void;
-  hasSecondFactor?: boolean;
 }
 
 function isActive(pathname: string, href: string): boolean {
@@ -101,13 +100,11 @@ function SidebarContent({
   onNavigate,
   user,
   onAddTransaction,
-  hasSecondFactor,
 }: {
   collapsed: boolean;
   onNavigate: () => void;
   user: ShellUser | null;
   onAddTransaction: () => void;
-  hasSecondFactor?: boolean;
 }) {
   const pathname = usePathname();
   const SettingsIcon = settingsItem.icon;
@@ -155,7 +152,7 @@ function SidebarContent({
       />
 
       <div className="shrink-0 border-t border-sidebar-line pt-2">
-        <AccountMenu user={user} collapsed={collapsed} hasSecondFactor={hasSecondFactor} />
+        <AccountMenu user={user} collapsed={collapsed} />
       </div>
     </div>
   );
@@ -168,7 +165,6 @@ export function Sidebar({
   mobileOpen,
   onMobileOpenChange,
   onAddTransaction,
-  hasSecondFactor,
 }: SidebarProps) {
   return (
     <>
@@ -181,7 +177,6 @@ export function Sidebar({
           onNavigate={() => {}}
           user={user}
           onAddTransaction={onAddTransaction}
-          hasSecondFactor={hasSecondFactor}
         />
         <Button
           variant="outline"
@@ -230,7 +225,6 @@ export function Sidebar({
               onMobileOpenChange(false);
               onAddTransaction();
             }}
-            hasSecondFactor={hasSecondFactor}
           />
         </SheetContent>
       </Sheet>
