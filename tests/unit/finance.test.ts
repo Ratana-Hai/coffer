@@ -8,12 +8,19 @@ import {
 import { categoryFor } from "@/lib/finance/categories";
 import { currencyFormat } from "@/lib/finance/currency";
 import { buildTrendBuckets, goalPercent, overviewPeriod } from "@/lib/finance/overview";
-import { decimalToMinor, fmtCompact, fmtMoney } from "@/lib/finance/money";
+import { decimalToMinor, fmtCompact, fmtMoney, minorToDecimalString } from "@/lib/finance/money";
 
 describe("money", () => {
   it("converts database decimals to minor units without binary float math", () => {
     expect(decimalToMinor("1234.56")).toBe(123456);
     expect(decimalToMinor("-1.005")).toBe(-101);
+  });
+
+  it("round-trips minor units to an exact decimal string", () => {
+    expect(minorToDecimalString(123456)).toBe("1234.56");
+    expect(minorToDecimalString(7)).toBe("0.07");
+    expect(minorToDecimalString(0)).toBe("0.00");
+    expect(minorToDecimalString(-1234)).toBe("-12.34");
   });
 
   it("formats KHR as a whole-number suffix", () => {

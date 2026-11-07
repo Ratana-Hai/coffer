@@ -48,3 +48,13 @@ export function fmtCompact(amount: Minor, currency: CurrencyFormat): string {
 export function minorToMajor(amount: Minor): number {
   return amount / 100;
 }
+
+/** Minor units → a fixed-point decimal string, e.g. 123456 → "1234.56". Exact —
+ * no binary float is involved, so a Decimal can be built from the result. */
+export function minorToDecimalString(amount: Minor): string {
+  const sign = amount < 0 ? "-" : "";
+  const abs = Math.abs(amount);
+  const whole = Math.floor(abs / 100);
+  const fraction = String(abs % 100).padStart(2, "0");
+  return `${sign}${whole}.${fraction}`;
+}

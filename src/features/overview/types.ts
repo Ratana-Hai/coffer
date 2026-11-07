@@ -1,6 +1,7 @@
 import type { CurrencyFormat } from "@/lib/finance/currency";
 import type { MonthBucket } from "@/lib/finance/overview";
 import type { Minor } from "@/lib/finance/money";
+import type { Transaction } from "@/features/transactions/types";
 
 export interface OverviewCategory {
   key: string;
@@ -9,15 +10,7 @@ export interface OverviewCategory {
   total: Minor;
 }
 
-export interface RecentTransaction {
-  id: string;
-  date: string;
-  desc: string;
-  amount: Minor;
-  type: "income" | "expense";
-  category: string | null;
-  loanId: string | null;
-}
+export type RecentTransaction = Transaction;
 
 export interface OverviewData {
   balance: Minor;

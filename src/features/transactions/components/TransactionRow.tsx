@@ -1,14 +1,14 @@
 import { categoryFor } from "@/lib/finance/categories";
 import { fmtMoney } from "@/lib/finance/money";
 import type { CurrencyFormat } from "@/lib/finance/currency";
-import type { RecentTransaction } from "@/features/overview/types";
+import type { Transaction } from "../types";
 import { DeleteTransactionButton } from "./DeleteTransactionButton";
 
 export function TransactionRow({
   transaction,
   currency,
 }: {
-  transaction: RecentTransaction;
+  transaction: Transaction;
   currency: CurrencyFormat;
 }) {
   const label = transaction.type === "income" ? "Income" : categoryFor(transaction.category).label;
