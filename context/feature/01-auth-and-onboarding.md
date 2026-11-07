@@ -63,7 +63,8 @@ beginTotpEnrollment(): { uri, qrSvg }         // R8
 confirmTotpEnrollment(prev, formData)         // R9
 disableTotp(prev, formData)                  // R10 — requires a current code
 verifyTotp(prev, formData)                   // R11, R12
-signOut(): never                             // R13
+signOut(): never                             // R17 — always available
+lockNow(): never                             // R13 — second factor only
 ```
 
 ## UI
@@ -119,8 +120,8 @@ signOut(): never                             // R13
 **Session**
 
 - **R13.** *Lock now* in the account menu ends the session and redirects to
-  sign-in. Nothing of the ledger is painted behind the sign-in or challenge
-  screen — not for a frame.
+  sign-in. It is shown only when a second factor is enrolled — the quick lock
+  exists so a 2FA-protected ledger can be sealed without leaving the desk.
 - **R14.** `middleware.ts` gates the whole `(app)` route group. An
   unauthenticated request to any of it redirects to `/sign-in?next=<path>`.
 - **R15.** The session resolves **before** any ledger content renders, so a
@@ -128,6 +129,19 @@ signOut(): never                             // R13
   in the layout — never a client effect that paints first and redirects second.
 - **R16.** Sign-**in** never reveals whether an email is registered. Sign-**up**
   may, on the email field, because it has to.
+
+**Sign out**
+
+- **R17.** *Sign out* is **always** available in the account menu — whether or
+  not a second factor is enrolled. It fully ends the session, clears the session
+  cookie, and redirects to `/sign-in`. After signing out there is no ledger
+  content painted anywhere, not for a frame.
+- **R18.** *Sign out* and *Lock now* are distinct. Sign out is the ordinary exit:
+  it ends the session and returns to sign-in, from where the user signs in again.
+  Lock now is the same end-of-session behavior but is only offered to
+  2FA-enrolled accounts, as a deliberate "seal the ledger now" gesture. A
+  hijacked session must not be able to remove the second factor by signing out —
+  that path still requires a current code (R10).
 
 ## States
 
@@ -152,6 +166,10 @@ signOut(): never                             // R13
 - [ ] Disabling the second factor without a current code is refused (R10)
 - [ ] The cooldown holds when the client-side counter is bypassed (R12)
 - [ ] No ledger content is present in the DOM behind the challenge screen (R13)
+- [ ] *Sign out* is present in the account menu without a second factor, ends the
+      session, and redirects to `/sign-in` (R17)
+- [ ] After signing out, a direct request to a gated route redirects to
+      `/sign-in` (R17, R14)
 - [ ] A direct request to `/transactions` while signed out redirects and returns
       after sign-in (R14)
 
@@ -166,6 +184,9 @@ accounts, account deletion, device/session management. All post-v1.
    recommendation: nothing to store, nothing to leak, and it keeps sign-up at
    exactly two fields (R2). The cost is a hard dependency on email delivery,
    which needs a provider decision in phase 3.
-2. Does *Lock now* end the session outright, or keep it and require only the
-   second factor to resume? The second is friendlier; the first is correct on a
-   shared machine. Recommendation: end it, and revisit if people complain.
+2. ~~Does *Lock now* end the session outright, or keep it and require only the
+   second factor to resume?~~ **Resolved.** *Lock now* ends the session (R13);
+   the always-available *Sign out* is the ordinary exit (R17). The "keep the
+   session, require only the second factor" variant is intentionally not built —
+   a half-alive session behind a code prompt is more surface to reason about for
+   no real gain, and *Sign out* already covers the shared-machine case.

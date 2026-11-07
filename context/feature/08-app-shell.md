@@ -159,9 +159,9 @@ panel shape without losing entered values.
 
 The account menu opens from the profile control at the bottom of the sidebar.
 In order it contains the account head (avatar, display name, *Personal ledger*),
-the immediate **Display currency** quick-switch, a divider, and **Lock now**
-(hidden when no second factor is enrolled). Settings is a sidebar destination,
-not a duplicate menu item.
+the immediate **Display currency** quick-switch, a divider, **Sign out** (always
+shown), and **Lock now** (hidden when no second factor is enrolled). Settings is
+a sidebar destination, not a duplicate menu item.
 
 The avatar initials derive from the display name and update live with the
 Settings draft. The stat grid is hidden on `/settings` and shown on every other
