@@ -7,3 +7,10 @@ export async function deleteTransaction(userId: string, transactionId: string) {
   });
   return result.count === 1;
 }
+
+export async function findAllTransactions(userId: string) {
+  return prisma.transaction.findMany({
+    where: { userId },
+    orderBy: [{ date: "desc" }, { id: "desc" }],
+  });
+}

@@ -8,6 +8,7 @@ import { TimezoneSync } from "@/components/layout/TimezoneSync";
 import { Toaster } from "@/components/ui/sonner";
 import { OnboardingWelcome } from "@/features/auth/components/OnboardingWelcome";
 import { getOnboardingState } from "@/features/auth/queries";
+import { getCurrentCurrency } from "@/features/settings/queries";
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const state = await getOnboardingState();
@@ -16,9 +17,11 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     return <OnboardingWelcome name={state.user.name} />;
   }
 
+  const currencyCode = await getCurrentCurrency();
+
   return (
     <>
-      <AppShell user={state.user}>
+      <AppShell user={state.user} currencyCode={currencyCode}>
         <TimezoneSync />
         <StatGridVisibility>
           <Suspense fallback={<StatGridSkeleton />}>

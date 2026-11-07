@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 
 export interface SidebarProps {
   user: ShellUser | null;
+  currencyCode: string;
   collapsed: boolean;
   onCollapsedChange: (collapsed: boolean) => void;
   mobileOpen: boolean;
@@ -99,11 +100,13 @@ function SidebarContent({
   collapsed,
   onNavigate,
   user,
+  currencyCode,
   onAddTransaction,
 }: {
   collapsed: boolean;
   onNavigate: () => void;
   user: ShellUser | null;
+  currencyCode: string;
   onAddTransaction: () => void;
 }) {
   const pathname = usePathname();
@@ -152,7 +155,7 @@ function SidebarContent({
       />
 
       <div className="shrink-0 border-t border-sidebar-line pt-2">
-        <AccountMenu user={user} collapsed={collapsed} />
+        <AccountMenu user={user} currencyCode={currencyCode} collapsed={collapsed} />
       </div>
     </div>
   );
@@ -160,6 +163,7 @@ function SidebarContent({
 
 export function Sidebar({
   user,
+  currencyCode,
   collapsed,
   onCollapsedChange,
   mobileOpen,
@@ -176,6 +180,7 @@ export function Sidebar({
           collapsed={collapsed}
           onNavigate={() => {}}
           user={user}
+          currencyCode={currencyCode}
           onAddTransaction={onAddTransaction}
         />
         <Button
@@ -221,6 +226,7 @@ export function Sidebar({
             collapsed={false}
             onNavigate={() => onMobileOpenChange(false)}
             user={user}
+            currencyCode={currencyCode}
             onAddTransaction={() => {
               onMobileOpenChange(false);
               onAddTransaction();

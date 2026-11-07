@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { ChevronsUpDown, Lock } from "lucide-react";
 import {
   DropdownMenu,
@@ -12,19 +11,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { CURRENCIES } from "@/lib/finance/currency";
 import { lockNow } from "@/features/auth/actions";
+import { setCurrency } from "@/features/settings/actions";
 
 export interface ShellUser {
   name?: string | null;
   email?: string | null;
 }
-
-const currencies = [
-  { code: "USD", symbol: "$" },
-  { code: "EUR", symbol: "€" },
-  { code: "GBP", symbol: "£" },
-  { code: "KHR", symbol: "៛" },
-];
 
 function initials(name?: string | null): string {
   const trimmed = name?.trim();
@@ -37,12 +31,13 @@ function initials(name?: string | null): string {
 
 export function AccountMenu({
   user,
+  currencyCode,
   collapsed = false,
 }: {
   user: ShellUser | null;
+  currencyCode: string;
   collapsed?: boolean;
 }) {
-  const [currency, setCurrency] = useState("USD");
   const displayName = user?.name?.trim() || user?.email?.trim() || "You";
   const email = user?.email?.trim() || "Personal ledger";
 
@@ -90,13 +85,13 @@ export function AccountMenu({
         <DropdownMenuSeparator />
 
         <DropdownMenuLabel className="text-xs text-muted">Display currency</DropdownMenuLabel>
-        {currencies.map(({ code, symbol }) => (
+        {CURRENCIES.map(({ code, symbol }) => (
           <DropdownMenuCheckboxItem
             key={code}
-            checked={currency === code}
+            checked={currencyCode === code}
             onSelect={(event) => {
               event.preventDefault();
-              setCurrency(code);
+              void setCurrency(code);
             }}
           >
             <span className="flex-1">{code}</span>

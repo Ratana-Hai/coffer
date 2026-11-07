@@ -17,6 +17,10 @@ export async function markOnboarded(userId: string) {
   return prisma.user.update({ where: { id: userId }, data: { onboarded: true } });
 }
 
+export async function updateProfile(userId: string, data: { name?: string; email?: string }) {
+  return prisma.user.update({ where: { id: userId }, data });
+}
+
 export interface ActivityCounts {
   transactions: number;
   budgets: number;

@@ -6,7 +6,15 @@ import { Sidebar } from "./Sidebar";
 import type { ShellUser } from "./AccountMenu";
 import { AddTransactionPanel } from "@/features/transactions/components/AddTransactionPanel";
 
-export function AppShell({ user, children }: { user: ShellUser | null; children: ReactNode }) {
+export function AppShell({
+  user,
+  currencyCode,
+  children,
+}: {
+  user: ShellUser | null;
+  currencyCode: string;
+  children: ReactNode;
+}) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
@@ -15,6 +23,7 @@ export function AppShell({ user, children }: { user: ShellUser | null; children:
     <div className="flex h-dvh w-full">
       <Sidebar
         user={user}
+        currencyCode={currencyCode}
         collapsed={collapsed}
         onCollapsedChange={setCollapsed}
         mobileOpen={mobileOpen}

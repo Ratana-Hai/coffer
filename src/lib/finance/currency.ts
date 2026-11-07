@@ -15,6 +15,10 @@ const currencies: Record<CurrencyCode, Omit<CurrencyFormat, "code">> = {
   GBP: { symbol: "£", decimals: 2, position: "prefix" },
 };
 
+export const CURRENCIES: CurrencyFormat[] = (Object.keys(currencies) as CurrencyCode[]).map(
+  (code) => ({ code, ...currencies[code] }),
+);
+
 export function currencyFormat(
   code: string | null | undefined,
   customSymbol: string | null = null,
