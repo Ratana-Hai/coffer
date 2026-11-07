@@ -10,6 +10,7 @@ Not Started
 
 ## History
 
+- Loans — `feature/loans`.
 - Budgets — `feature/budgets`.
 - Transactions — `feature/transactions`.
 - Settings — `feature/settings`.
