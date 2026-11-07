@@ -10,6 +10,7 @@ Not Started
 
 ## History
 
+- Budgets — `feature/budgets`.
 - Transactions — `feature/transactions`.
 - Settings — `feature/settings`.
 - Auth & Onboarding — `feature/auth-onboarding`.

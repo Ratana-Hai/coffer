@@ -17,6 +17,9 @@
   --accent-text: #6b93f5;
   --positive: #9fd3a8;
   --negative: #f19a91;
+  --good: #9fd3a8;
+  --warning: #e0c36c;
+  --critical: #f19a91;
   --chart-income: #9fd3a8;
   --chart-expense: #e9857b;
   --category-0: #e0a16e;
@@ -56,6 +59,9 @@
   --accent-text: #2563eb;
   --positive: #28733c;
   --negative: #a43c35;
+  --good: #28733c;
+  --warning: #8c6b00;
+  --critical: #a43c35;
   --chart-income: #418b52;
   --chart-expense: #c4554b;
   --category-0: #a75b20;
@@ -119,6 +125,9 @@
   --color-accent-text: var(--accent-text);
   --color-positive: var(--positive);
   --color-negative: var(--negative);
+  --color-good: var(--good);
+  --color-warning: var(--warning);
+  --color-critical: var(--critical);
   --color-sidebar: var(--sidebar);
   --color-sidebar-hover: var(--sidebar-hover);
   --color-sidebar-line: var(--sidebar-line);
