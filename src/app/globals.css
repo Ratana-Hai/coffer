@@ -31,6 +31,7 @@
   --category-6: #e0c36c;
   --category-7: #dc7774;
   --category-8: #8e9a91;
+  --category-9: #d4a24e;
   --sidebar: #141829;
   --sidebar-hover: #232a3d;
   --sidebar-line: #2b3146;
@@ -73,6 +74,7 @@
   --category-6: #8c6b00;
   --category-7: #a7433e;
   --category-8: #59655d;
+  --category-9: #9a6f14;
 }
 
 :root[data-base="neutral"] {

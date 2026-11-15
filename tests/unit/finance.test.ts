@@ -7,7 +7,12 @@ import {
 } from "@/lib/finance/amortization";
 import { categoryFor } from "@/lib/finance/categories";
 import { currencyFormat } from "@/lib/finance/currency";
-import { buildTrendBuckets, goalPercent, overviewPeriod } from "@/lib/finance/overview";
+import {
+  buildTrendBuckets,
+  goalPercent,
+  goalProgressPercent,
+  overviewPeriod,
+} from "@/lib/finance/overview";
 import { decimalToMinor, fmtCompact, fmtMoney, minorToDecimalString } from "@/lib/finance/money";
 
 describe("money", () => {
@@ -111,5 +116,11 @@ describe("overview derived values", () => {
     expect(goalPercent(250, 1000)).toBe(25);
     expect(categoryFor("loan").slot).toBe(7);
     expect(categoryFor("unknown").key).toBe("other");
+  });
+
+  it("caps the goal-card progress percentage at 100 (spec 06, R1)", () => {
+    expect(goalProgressPercent(120, 100)).toBe(100);
+    expect(goalProgressPercent(24, 100)).toBe(24);
+    expect(goalProgressPercent(0, 0)).toBe(0);
   });
 });

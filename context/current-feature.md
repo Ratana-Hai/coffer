@@ -10,6 +10,7 @@ Not Started
 
 ## History
 
+- Savings Goals — `feature/goals`.
 - Loans — `feature/loans`.
 - Budgets — `feature/budgets`.
 - Transactions — `feature/transactions`.

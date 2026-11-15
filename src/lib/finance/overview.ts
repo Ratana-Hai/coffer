@@ -82,3 +82,9 @@ export function buildTrendBuckets(
 export function goalPercent(saved: Minor, target: Minor): number {
   return target === 0 ? 0 : Math.round((saved / target) * 100);
 }
+
+/** Capped at 100% for the goal-card meter (spec 06, R1) — over-saving shows a
+ * full bar while the figures still show the true amounts. */
+export function goalProgressPercent(saved: Minor, target: Minor): number {
+  return Math.min(goalPercent(saved, target), 100);
+}

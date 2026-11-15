@@ -93,9 +93,11 @@ model Transaction {
   type     TransactionType
   category String?
   loanId   String?         @map("loan_id") @db.Uuid
+  goalId   String?         @map("goal_id") @db.Uuid
 
   user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   loan Loan? @relation(fields: [loanId], references: [id], onDelete: SetNull)
+  goal Goal? @relation(fields: [goalId], references: [id], onDelete: SetNull)
 
   @@index([userId, date(sort: Desc)], map: "tx_user_date_idx")
   @@map("transactions")
@@ -120,7 +122,8 @@ model Goal {
   target Decimal @db.Decimal(14, 2)
   saved  Decimal @db.Decimal(14, 2)
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
 
   @@map("goals")
 }
