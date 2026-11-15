@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronsUpDown, Lock } from "lucide-react";
+import { ChevronsUpDown, Lock, LogOut } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { CURRENCIES } from "@/lib/finance/currency";
-import { lockNow } from "@/features/auth/actions";
+import { lockNow, signOutAccount } from "@/features/auth/actions";
 import { setCurrency } from "@/features/settings/actions";
 
 export interface ShellUser {
@@ -32,10 +32,12 @@ function initials(name?: string | null): string {
 export function AccountMenu({
   user,
   currencyCode,
+  hasSecondFactor,
   collapsed = false,
 }: {
   user: ShellUser | null;
   currencyCode: string;
+  hasSecondFactor: boolean;
   collapsed?: boolean;
 }) {
   const displayName = user?.name?.trim() || user?.email?.trim() || "You";
@@ -100,10 +102,16 @@ export function AccountMenu({
         ))}
 
         <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={() => void lockNow()}>
-          <Lock aria-hidden="true" />
-          Lock now
+        <DropdownMenuItem onSelect={() => void signOutAccount()}>
+          <LogOut aria-hidden="true" />
+          Sign out
         </DropdownMenuItem>
+        {hasSecondFactor ? (
+          <DropdownMenuItem onSelect={() => void lockNow()}>
+            <Lock aria-hidden="true" />
+            Lock now
+          </DropdownMenuItem>
+        ) : null}
       </DropdownMenuContent>
     </DropdownMenu>
   );

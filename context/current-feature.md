@@ -10,6 +10,7 @@ Not Started
 
 ## History
 
+- App Shell — `feature/app-shell`.
 - Savings Goals — `feature/goals`.
 - Loans — `feature/loans`.
 - Budgets — `feature/budgets`.

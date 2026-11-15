@@ -7,7 +7,7 @@ export default async function SettingsPage() {
 
   return (
     <>
-      <ViewHeader title="Settings" summary="Preferences, theme and data controls." />
+      <ViewHeader title="Settings" summary="Profile, currency and data" />
       <SettingsForm settings={settings} />
     </>
   );

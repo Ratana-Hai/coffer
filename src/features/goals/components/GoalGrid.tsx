@@ -10,7 +10,7 @@ export function GoalGrid({ data }: { data: GoalsData }) {
 
   return (
     <>
-      <ViewHeader title="Goals" summary={summary} eyebrow="Personal ledger" />
+      <ViewHeader title="Savings goals" summary={summary} eyebrow="Personal ledger" />
       <AddGoalPanel />
       <section>
         <h2 className="text-lg font-semibold tracking-tight">Your goals</h2>

@@ -9,10 +9,12 @@ import { AddTransactionPanel } from "@/features/transactions/components/AddTrans
 export function AppShell({
   user,
   currencyCode,
+  hasSecondFactor,
   children,
 }: {
   user: ShellUser | null;
   currencyCode: string;
+  hasSecondFactor: boolean;
   children: ReactNode;
 }) {
   const [collapsed, setCollapsed] = useState(false);
@@ -24,6 +26,7 @@ export function AppShell({
       <Sidebar
         user={user}
         currencyCode={currencyCode}
+        hasSecondFactor={hasSecondFactor}
         collapsed={collapsed}
         onCollapsedChange={setCollapsed}
         mobileOpen={mobileOpen}

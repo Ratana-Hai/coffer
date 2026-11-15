@@ -7,7 +7,7 @@ import { StatGridVisibility } from "@/components/layout/StatGridVisibility";
 import { TimezoneSync } from "@/components/layout/TimezoneSync";
 import { Toaster } from "@/components/ui/sonner";
 import { OnboardingWelcome } from "@/features/auth/components/OnboardingWelcome";
-import { getOnboardingState } from "@/features/auth/queries";
+import { getHasSecondFactor, getOnboardingState } from "@/features/auth/queries";
 import { getCurrentCurrency } from "@/features/settings/queries";
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
@@ -17,11 +17,14 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     return <OnboardingWelcome name={state.user.name} />;
   }
 
-  const currencyCode = await getCurrentCurrency();
+  const [currencyCode, hasSecondFactor] = await Promise.all([
+    getCurrentCurrency(),
+    getHasSecondFactor(),
+  ]);
 
   return (
     <>
-      <AppShell user={state.user} currencyCode={currencyCode}>
+      <AppShell user={state.user} currencyCode={currencyCode} hasSecondFactor={hasSecondFactor}>
         <TimezoneSync />
         <StatGridVisibility>
           <Suspense fallback={<StatGridSkeleton />}>

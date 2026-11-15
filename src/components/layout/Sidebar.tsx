@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 export interface SidebarProps {
   user: ShellUser | null;
   currencyCode: string;
+  hasSecondFactor: boolean;
   collapsed: boolean;
   onCollapsedChange: (collapsed: boolean) => void;
   mobileOpen: boolean;
@@ -101,12 +102,14 @@ function SidebarContent({
   onNavigate,
   user,
   currencyCode,
+  hasSecondFactor,
   onAddTransaction,
 }: {
   collapsed: boolean;
   onNavigate: () => void;
   user: ShellUser | null;
   currencyCode: string;
+  hasSecondFactor: boolean;
   onAddTransaction: () => void;
 }) {
   const pathname = usePathname();
@@ -155,7 +158,12 @@ function SidebarContent({
       />
 
       <div className="shrink-0 border-t border-sidebar-line pt-2">
-        <AccountMenu user={user} currencyCode={currencyCode} collapsed={collapsed} />
+        <AccountMenu
+          user={user}
+          currencyCode={currencyCode}
+          hasSecondFactor={hasSecondFactor}
+          collapsed={collapsed}
+        />
       </div>
     </div>
   );
@@ -164,6 +172,7 @@ function SidebarContent({
 export function Sidebar({
   user,
   currencyCode,
+  hasSecondFactor,
   collapsed,
   onCollapsedChange,
   mobileOpen,
@@ -181,6 +190,7 @@ export function Sidebar({
           onNavigate={() => {}}
           user={user}
           currencyCode={currencyCode}
+          hasSecondFactor={hasSecondFactor}
           onAddTransaction={onAddTransaction}
         />
         <Button
@@ -227,6 +237,7 @@ export function Sidebar({
             onNavigate={() => onMobileOpenChange(false)}
             user={user}
             currencyCode={currencyCode}
+            hasSecondFactor={hasSecondFactor}
             onAddTransaction={() => {
               onMobileOpenChange(false);
               onAddTransaction();

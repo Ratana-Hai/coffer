@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ViewHeader } from "@/components/layout/ViewHeader";
 import { TransactionList } from "@/features/transactions/components/TransactionList";
-import { getCurrencyFormat, getTransactions } from "@/features/transactions/queries";
+import { getCurrencyFormat, getTransactionCount, getTransactions } from "@/features/transactions/queries";
 import type { TransactionFilters, TransactionType } from "@/features/transactions/types";
 
 const LIMIT = 50;
@@ -30,12 +30,17 @@ export default async function TransactionsPage({
 }) {
   const params = await searchParams;
   const filters = parseFilters(params);
-  const page = await getTransactions({ limit: LIMIT, ...filters });
-  const currency = await getCurrencyFormat();
+  const [page, currency, count] = await Promise.all([
+    getTransactions({ limit: LIMIT, ...filters }),
+    getCurrencyFormat(),
+    getTransactionCount(),
+  ]);
+
+  const summary = `${count} ${count === 1 ? "entry" : "entries"} logged`;
 
   return (
     <>
-      <ViewHeader title="Transactions" summary="Most recent first" eyebrow="Personal ledger" />
+      <ViewHeader title="Transactions" summary={summary} eyebrow="Personal ledger" />
       <Card>
         <CardHeader>
           <CardTitle>All transactions</CardTitle>

@@ -124,6 +124,11 @@ export async function lockNow(): Promise<void> {
   await signOut({ redirectTo: "/sign-in" });
 }
 
+/** R17 — the ordinary exit, always available in the account menu. */
+export async function signOutAccount(): Promise<void> {
+  await signOut({ redirectTo: "/sign-in" });
+}
+
 async function clientIp(): Promise<string> {
   const h = await headers();
   return (

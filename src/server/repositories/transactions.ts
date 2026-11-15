@@ -44,6 +44,10 @@ export async function findAllTransactions(userId: string) {
   });
 }
 
+export async function countTransactions(userId: string): Promise<number> {
+  return prisma.transaction.count({ where: { userId } });
+}
+
 export async function insertTransaction(
   userId: string,
   data: {

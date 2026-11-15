@@ -4,7 +4,7 @@ import { currencyFormat } from "@/lib/finance/currency";
 import type { CurrencyFormat } from "@/lib/finance/currency";
 import { requireUser } from "@/server/auth/session";
 import { findPreference } from "@/server/repositories/preferences";
-import { findPage } from "@/server/repositories/transactions";
+import { countTransactions, findPage } from "@/server/repositories/transactions";
 import type { Transaction, TransactionFilters } from "./types";
 
 export const getCurrencyFormat = cache(async (): Promise<CurrencyFormat> => {
@@ -29,4 +29,9 @@ export const getRecentTransactions = cache(async (limit = 5): Promise<Transactio
   const user = await requireUser();
   const page = await findPage(user.id, { limit });
   return page.items;
+});
+
+export const getTransactionCount = cache(async (): Promise<number> => {
+  const user = await requireUser();
+  return countTransactions(user.id);
 });
